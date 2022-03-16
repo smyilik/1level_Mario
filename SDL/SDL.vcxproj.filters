@@ -21,9 +21,6 @@
     <ClCompile Include="Classes.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Artem.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Images\1st_Level.png">
@@ -35,6 +32,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="head.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ClassHeader.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

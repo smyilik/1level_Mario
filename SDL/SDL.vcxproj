@@ -142,7 +142,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Artem.cpp" />
     <ClCompile Include="Classes.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -151,6 +150,7 @@
     <Image Include="Images\mario_49x69.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClassHeader.h" />
     <ClInclude Include="head.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

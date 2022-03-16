@@ -1,5 +1,4 @@
 #include "head.h"
-#include "Classes.cpp"
 
 SDL_Texture* IMG_LoadTexture(SDL_Renderer* renderer, const char* file)
 {
@@ -163,7 +162,8 @@ int main(int argc, char* argv[])
     setlocale(LC_NUMERIC, "Russian");
     SDL_Texture* textureIMG = IMG_LoadTexture(window.renderer, "C:/map1.png");
     SDL_Texture* texturePlayer = IMG_LoadTexture(window.renderer, "C:/mario_49x69.png");
-    //Р—Р°Р»РёРІР°РµРј
+    SDL_Texture* texturePauseMenu = IMG_LoadTexture(window.renderer, "C:/PauseMenu.png");
+    //Заливаем
 
     //Checking if everything is OK
     if (textureIMG == nullptr) {
@@ -174,10 +174,15 @@ int main(int argc, char* argv[])
         cout << "IMG_LoadTexture player Error: " << SDL_GetError() << "\n";
         return 1;
     }
+    else if (texturePauseMenu == nullptr) {
+        cout << "IMG_LoadTexture PauseMenu Error: " << SDL_GetError() << "\n";
+        return 1;
+    }
 
     //Creating a character and a background
     Player player = Player(texturePlayer, 120, 500, 49, 60);
     BackGround backGround = BackGround(textureIMG, 0, -16, 5000, 704);
+    PauseMenu pause = PauseMenu(texturePauseMenu, 384, 0, 512, 290);
     
     unsigned int lastUpdateTime = 0;
     bool podnim = false;
@@ -185,14 +190,21 @@ int main(int argc, char* argv[])
     int x, y;
     int kol = 0;
     bool isAlive = true;
+    bool leave = false;
     //Infinity loop
     while (isAlive) {
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT)
+            if (e.type == SDL_QUIT) {
+                leave = true;
                 break;
-            else if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE)
-                break;
+            }
+            else if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE) {
+                Paused(window, pause, leave);
+                if (leave) {
+                    break;
+                }
+            }
         }
 
         //CollisionCheck(podnim, pos, player.texr, backGround.texr, x, y);
@@ -207,6 +219,7 @@ int main(int argc, char* argv[])
 
             SDL_RenderCopy(window.renderer, backGround.texture, NULL, &backGround.texr);
             SDL_RenderCopy(window.renderer, player.texture, NULL, &player.texr);
+            //SDL_RenderCopy(window.renderer, pause.texture, NULL, &pause.hitbox);
             SDL_RenderPresent(window.renderer);
         }
         //Making a small delay
@@ -215,8 +228,31 @@ int main(int argc, char* argv[])
     }
     SDL_DestroyTexture(textureIMG);
     SDL_DestroyTexture(texturePlayer);
+    if (texturePauseMenu != nullptr) {
+        SDL_DestroyTexture(texturePauseMenu);
+    }
     SDL_DestroyRenderer(window.renderer);
     SDL_DestroyWindow(window.window);
 
     return 0;
+}
+
+void Paused(Window &window, PauseMenu &pause, bool &quit)
+{
+    SDL_Event e;
+    pause.Query();
+    while (1) {
+        SDL_PollEvent(&e);
+        if ((e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE)) {
+            break;
+        }
+        else if (e.type == SDL_QUIT) {
+            quit = true;
+            break;
+        }
+        else {
+            SDL_RenderCopy(window.renderer, pause.texture, NULL, &pause.hitbox);
+            SDL_RenderPresent(window.renderer);
+        }
+    }
 }
