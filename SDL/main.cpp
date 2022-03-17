@@ -85,12 +85,8 @@ void Moving(bool & podnim, SDL_Renderer *&renderer, SDL_Texture*& Ptexture, SDL_
         }
 
         if (Btexr.x <= -3700 && Ptexr.x > 10) {
-            Ptexr.x -= 3;
+            Ptexr.x -= 2;
         }
-
-        //else if (Btexr.x <= -3700 && Ptexr.x <= 120 && mar(x - 1, y) == 0) {
-        //    Btexr.x += 3;
-        //}
 
         else {
             int x = roundf(float(Btexr.x * (-1) + Ptexr.x - 29) / 64.1),
@@ -101,7 +97,7 @@ void Moving(bool & podnim, SDL_Renderer *&renderer, SDL_Texture*& Ptexture, SDL_
                     Btexr.x += 1;
                 }
                 else {
-                    Btexr.x += 5;
+                    Btexr.x += 3;
                 }
             }
         }
@@ -165,7 +161,7 @@ int main(int argc, char* argv[])
     SDL_Texture* texturePauseMenu = IMG_LoadTexture(window.renderer, "C:/PauseMenu.png");
     //Заливаем
 
-    //Checking if everything is OK
+    //Checking if everything is OKw
     if (textureIMG == nullptr) {
         cout << "IMG_LoadTexture img Error: " << SDL_GetError() << "\n";
         return 1;
