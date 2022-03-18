@@ -27,109 +27,117 @@ int mar(int x, int y)
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 9, 9, 9, 9, 9, 9, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 9, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, },
     };
-    //cout<<arg[2][9]<<endl<<endl;
     return arg[y][x];
 }
 
-void Moving(bool & podnim, SDL_Renderer *&renderer, SDL_Texture*& Ptexture, SDL_Rect& Ptexr, SDL_Rect& Btexr, int &kol, int &pos, bool &isAlive)
+void Moving(Window& window, Player &player, BackGround &backGround, bool &podnim, int &kol, int &pos, bool &victory, SDL_Texture *&Ptexture)
 {
-    //CollisionCheck()
+    SDL_Texture* texturePlayer = IMG_LoadTexture(window.renderer, "C:/mario_49x69.png");
+    SDL_Texture* textureJump = IMG_LoadTexture(window.renderer, "C:/mar_jump.png");
+    SDL_Texture* textureBack = IMG_LoadTexture(window.renderer, "C:/beg_nazad1.png");
+    SDL_Texture* textureBack2 = IMG_LoadTexture(window.renderer, "C:/beg_nazad2.png");
+    SDL_Texture* textureForward = IMG_LoadTexture(window.renderer, "C:/beg1.png");
+    SDL_Texture* textureForward2 = IMG_LoadTexture(window.renderer, "C:/beg2.png");
+    int x = roundf(float(backGround.texr.x * (-1) + player.texr.x) / 64.1), 
+        y = roundf(float(player.texr.y + 30) / 64);
 
-    //поднимаемся или опускаемся
-    int x = roundf(float(Btexr.x * (-1) + Ptexr.x) / 64.1), 
-        y = roundf(float(Ptexr.y + 30) / 64);
+    if (mar(x, y + 1) == 9) {
+        int count = 4 - player.Hearts();
+        player = Player(Ptexture, 120, 500, 49, 60);
+        backGround = BackGround(backGround.texture, 0, -16, 5000, 704);
+        for (int i = 0; i < count; i++) {
+            player.HealthRemove();
+        }
+        if (!player.Alive()) {
+            return;
+        }
+    }
 
-    if (mar(x, y) == 9)
-        isAlive = false;
+    else if (mar(x, y) == 5) {
+        victory = true;
+        return;
+    }
 
     if (podnim == true && (mar(x, y) != 1 && mar(x, y) != 2 && mar(x, y) != 3)) {
-        Ptexr.y -= 5;
-        int x = roundf(float(Btexr.x * (-1) + Ptexr.x) / 64.1), y = roundf(float(Ptexr.y + 30) / 64);
-        if (Ptexr.y <= pos - 220 || mar(x, y) == 1) {
+        player.texr.y -= 5;
+        int x = roundf(float(backGround.texr.x * (-1) + player.texr.x) / 64.1), y = roundf(float(player.texr.y + 30) / 64);
+        if (player.texr.y <= pos - 220 || mar(x, y) == 1) {
             podnim = false;
         }
     }
 
     if ((podnim == false && mar(x, y + 1) != 1 && mar(x, y + 1) != 2 && mar(x, y + 1) != 3))
     {
-        Ptexr.y += 5;
+        player.texr.y += 5;
     }
 
 
-    //смена текстуры
     if (podnim == false && (mar(x, y + 1) != 0))
-        Ptexture = IMG_LoadTexture(renderer, "C:/mario_49x69.png");
+        player.texture = texturePlayer;
 
-    //сами действия
-    if (GetKeyState('W') & 0x8000 && Ptexr.y >= 5)
+    if (GetKeyState('W') & 0x8000 && player.texr.y >= 5)
     {
 
-        Ptexture = IMG_LoadTexture(renderer, "C:/mar_jump.png");
+        player.texture = textureJump;
         if (mar(x, y + 1) == 1 || mar(x, y + 1) == 2 || mar(x, y + 1) == 3) {
             if (mar(x, y + 1) == 3)
-                pos = Ptexr.y - 100;
+                pos = player.texr.y - 100;
             else
-                pos = Ptexr.y;
+                pos = player.texr.y;
             podnim = true;
 
-            Ptexr.y -= 5;
+            player.texr.y -= 5;
         }
     }
-    if (GetKeyState('A') & 0x8000 && Btexr.x < 0)
+    if (GetKeyState('A') & 0x8000 && backGround.texr.x < 0)
     {
         if (kol % 70 > 35) {
-            Ptexture = IMG_LoadTexture(renderer, "C:/beg_nazad1.png");
+            player.texture = textureBack;
         }
         else {
-            Ptexture = IMG_LoadTexture(renderer, "C:/beg_nazad2.png");
+            player.texture = textureBack2;
         }
 
-        if (Btexr.x <= -3700 && Ptexr.x > 10) {
-            Ptexr.x -= 2;
+        if (backGround.texr.x <= -3700 && player.texr.x > 10) {
+            player.texr.x -= 2;
         }
 
         else {
-            int x = roundf(float(Btexr.x * (-1) + Ptexr.x - 29) / 64.1),
-                y = roundf(float(Ptexr.y + 70) / 64);
+            int x = roundf(float(backGround.texr.x * (-1) + player.texr.x - 29) / 64.1),
+                y = roundf(float(player.texr.y + 70) / 64);
 
             if (mar(x - 1, y) != 1 && mar(x - 1, y) != 2 && mar(x - 1, y) != 3) {
                 if (mar(x, y + 1) == 2) {
-                    Btexr.x += 1;
+                    backGround.texr.x += 1;
                 }
                 else {
-                    Btexr.x += 3;
+                    backGround.texr.x += 3;
                 }
             }
         }
     }
-    //S
-/*if (GetKeyState('S') & 0x8000 && Ptexr.y <= 656)
-    {
-        Ptexr.y += 5;
-    }
-*/
-    if (GetKeyState('D') & 0x8000 && Btexr.x >= -5000 && Ptexr.x <= 1100)
+    if (GetKeyState('D') & 0x8000 && backGround.texr.x >= -5000 && player.texr.x <= 1100)
     {
         if (kol % 70 > 35) {
-            Ptexture = IMG_LoadTexture(renderer, "C:/beg1.png");
+            player.texture = textureForward;
         }
         else {
-            Ptexture = IMG_LoadTexture(renderer, "C:/beg2.png");
+            player.texture = textureForward2;
         }
 
-        if (Btexr.x <= -3700/* && Ptexr.x >= 120 */) {
-            Ptexr.x += 3;
+        if (backGround.texr.x <= -3700/* && Ptexr.x >= 120 */) {
+            player.texr.x += 3;
         }
         else {
-            int x = roundf(float(Btexr.x * (-1) + Ptexr.x + 20) / 64.1),
-                y = OurRoundf(float(Ptexr.y + 70) / 64);
+            int x = roundf(float(backGround.texr.x * (-1) + player.texr.x + 20) / 64.1),
+                y = OurRoundf(float(player.texr.y + 70) / 64);
             if (mar(x, y) != 1 && mar(x, y) != 2 && mar(x, y) != 3)
                 if (mar(x, y + 1) == 2)
-                    Btexr.x -= 15;
-                else if (Btexr.x <= -3700)
-                    Btexr.x -= 5;
+                    backGround.texr.x -= 15;
+                else if (backGround.texr.x <= -3700)
+                    backGround.texr.x -= 5;
                 else
-                    Btexr.x -= 5;
+                    backGround.texr.x -= 5;
         }
     }
 }
@@ -138,11 +146,6 @@ int OurRoundf(float number)
 {
     if ((int)(number * 10) % 10 > 1) return (int)number + 1;
     else return roundf(number);
-}
-
-void CollisionCheck(bool &podnim, int &pos, SDL_Rect &Ptexr, SDL_Rect &Btexr, int x, int y)
-{
-
 }
 
 int main(int argc, char* argv[])
@@ -159,7 +162,11 @@ int main(int argc, char* argv[])
     SDL_Texture* textureIMG = IMG_LoadTexture(window.renderer, "C:/map1.png");
     SDL_Texture* texturePlayer = IMG_LoadTexture(window.renderer, "C:/mario_49x69.png");
     SDL_Texture* texturePauseMenu = IMG_LoadTexture(window.renderer, "C:/PauseMenu.png");
-    //��������
+    SDL_Texture* textureMenu = IMG_LoadTexture(window.renderer, "C:/menu.png");
+    SDL_Texture* textureMenuStart = IMG_LoadTexture(window.renderer, "C:/menu_start.png");
+    SDL_Texture* textureHeart = IMG_LoadTexture(window.renderer, "C:/heart.png");
+    SDL_Texture* textureWasted = IMG_LoadTexture(window.renderer, "C:/Wasted.png");
+    SDL_Texture* textureVictory = IMG_LoadTexture(window.renderer, "C:/victory.png");
 
     //Checking if everything is OKw
     if (textureIMG == nullptr) {
@@ -174,81 +181,188 @@ int main(int argc, char* argv[])
         cout << "IMG_LoadTexture PauseMenu Error: " << SDL_GetError() << "\n";
         return 1;
     }
+    else if (textureMenu == nullptr) {
+        cout << "IMG_LoadTexture menu Error: " << SDL_GetError() << "\n";
+        return 1;
+    }
+    else if (textureWasted == nullptr) {
+        cout << "IMG_LoadTexture Wasted Error: " << SDL_GetError() << "\n";
+        return 1;
+    }
 
     //Creating a character and a background
     Player player = Player(texturePlayer, 120, 500, 49, 60);
     BackGround backGround = BackGround(textureIMG, 0, -16, 5000, 704);
-    PauseMenu pause = PauseMenu(texturePauseMenu, 384, 0, 512, 290);
+    PauseMenu pause = PauseMenu(texturePauseMenu, 384, 200, 512, 290);
+    MainMenu menu = MainMenu(textureMenu, 0, 0, 1280, 704);
     
     unsigned int lastUpdateTime = 0;
     bool podnim = false;
     int pos = player.texr.y;
-    int x, y;
+    int wastedW = 1280, wastedH = 704, victoryW = 1280, victoryH = 704;
+    int mouseX, mouseY;
     int kol = 0;
-    bool isAlive = true;
-    bool leave = false;
+    bool shutDown = false, toMainMenu, victory;
+    SDL_Event e;
+    SDL_Rect heartTexr, wastedTexr, victoryTexr;
+    wastedTexr.x = 0;
+    wastedTexr.y = 0;
+    victoryTexr.x = 0;
+    victoryTexr.y = 0;
+
     //Infinity loop
-    while (isAlive) {
-        SDL_Event e;
+    while (!shutDown) {
+        shutDown = false;
+        victory = false;
+        toMainMenu = false;
+        SDL_GetMouseState(&mouseX, &mouseY);
         if (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) {
-                leave = true;
+            if (e.type == SDL_QUIT ||
+                (menu.InExit(mouseX, mouseY) && (GetKeyState(VK_LBUTTON) & 0x8000) != 0)) {
+                shutDown = true;
                 break;
             }
-            else if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE) {
-                Paused(window, pause, leave);
-                if (leave) {
-                    break;
+        }
+
+        if (menu.InStart(mouseX, mouseY)) {
+            menu.texture = textureMenuStart;
+            if ((GetKeyState(VK_LBUTTON) & 0x8000) != 0) {
+                menu.texture = textureMenu;
+                backGround = BackGround(textureIMG, 0, -16, 5000, 704);
+                player = Player(texturePlayer, 120, 500, 49, 60);
+                PlaySound(TEXT("C:/soundtrek.wav"), NULL, SND_ASYNC | SND_LOOP);
+                while (player.Alive() && !shutDown && !toMainMenu && !victory) {
+                    if (SDL_PollEvent(&e)) {
+                        if (e.type == SDL_QUIT) {
+                            shutDown = true;
+                            break;
+                        }
+                        else if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE) {
+                            Paused(window, pause, shutDown, toMainMenu);
+                            if (shutDown || toMainMenu) {
+                                break;
+                            }
+                            SDL_RenderPresent(window.renderer);
+                        }
+                    }
+
+                    //Moving our character
+                    Moving(window, player, backGround, podnim, kol, pos, victory, texturePlayer);
+
+                    if (lastUpdateTime + 30 < SDL_GetTicks()) {
+                        lastUpdateTime = SDL_GetTicks();
+
+                        SDL_RenderClear(window.renderer);
+
+                        SDL_RenderCopy(window.renderer, backGround.texture, NULL, &backGround.texr);
+                        SDL_RenderCopy(window.renderer, player.texture, NULL, &player.texr);
+                        ShowHearts(player, window, textureHeart);
+                        SDL_RenderPresent(window.renderer);
+                    }
+                    //Making a small delay
+                    Sleep(10);
+                    kol++;
+                }
+                PlaySound(NULL, NULL, 0);
+                if (!player.Alive()) {
+                    SDL_QueryTexture(textureWasted, NULL, NULL, &wastedW, &wastedH);
+                    wastedTexr.w = wastedW;
+                    wastedTexr.h = wastedH;
+                    PlaySound(TEXT("C:/wasted.wav"), NULL, SND_FILENAME | SND_ASYNC);
+                    while (!shutDown) {
+                        SDL_PollEvent(&e);
+                        if (e.type == SDL_QUIT) {
+                            shutDown = true;
+                        }
+                        else if ((GetKeyState(VK_LBUTTON) & 0x8000) != 0) {
+                            break;
+                        }
+                        SDL_RenderCopy(window.renderer, textureWasted, NULL, &wastedTexr);
+                        SDL_RenderPresent(window.renderer);
+                    }
+                }
+                else if (victory) {
+                    SDL_QueryTexture(textureVictory, NULL, NULL, &victoryW, &victoryH);
+                    victoryTexr.w = victoryW;
+                    victoryTexr.h = victoryH;
+                    PlaySound(TEXT("C:/victory.wav"), NULL, SND_FILENAME | SND_ASYNC);
+                    while (!shutDown) {
+                        SDL_PollEvent(&e);
+                        if (e.type == SDL_QUIT) {
+                            shutDown = true;
+                        }
+                        else if ((GetKeyState(VK_LBUTTON) & 0x8000) != 0) {
+                            break;
+                        }
+                        SDL_RenderCopy(window.renderer, textureVictory, NULL, &victoryTexr);
+                        SDL_RenderPresent(window.renderer);
+                    }
                 }
             }
         }
 
-        //CollisionCheck(podnim, pos, player.texr, backGround.texr, x, y);
-
-        //Moving our character
-        Moving(podnim, window.renderer, player.texture, player.texr, backGround.texr, kol, pos, isAlive);
-
-        if (lastUpdateTime + 30 < SDL_GetTicks()) {
-            lastUpdateTime = SDL_GetTicks();
-
-            SDL_RenderClear(window.renderer);
-
-            SDL_RenderCopy(window.renderer, backGround.texture, NULL, &backGround.texr);
-            SDL_RenderCopy(window.renderer, player.texture, NULL, &player.texr);
-            //SDL_RenderCopy(window.renderer, pause.texture, NULL, &pause.hitbox);
-            SDL_RenderPresent(window.renderer);
+        else {
+            menu.texture = textureMenu;
         }
-        //Making a small delay
+
+        SDL_RenderCopy(window.renderer, menu.texture, NULL, &menu.hitbox);
+        SDL_RenderPresent(window.renderer);
         Sleep(10);
-        kol++;
     }
     SDL_DestroyTexture(textureIMG);
     SDL_DestroyTexture(texturePlayer);
-    if (texturePauseMenu != nullptr) {
-        SDL_DestroyTexture(texturePauseMenu);
-    }
+    SDL_DestroyTexture(texturePauseMenu);
+    SDL_DestroyTexture(textureMenu);
+    SDL_DestroyTexture(texturePauseMenu);
+    SDL_DestroyTexture(textureHeart);
+    SDL_DestroyTexture(textureWasted);
+    SDL_DestroyTexture(textureVictory);
+
+
     SDL_DestroyRenderer(window.renderer);
     SDL_DestroyWindow(window.window);
-
+    
     return 0;
 }
 
-void Paused(Window &window, PauseMenu &pause, bool &quit)
+void Paused(Window &window, PauseMenu &pause, bool &shutDown, bool &tomainMenu)
 {
     SDL_Event e;
+    int x, y;
     pause.Query();
     while (1) {
         SDL_PollEvent(&e);
-        if ((e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE)) {
+        SDL_GetMouseState(&x, &y);
+        if ((e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE) ||
+            ((GetKeyState(VK_LBUTTON) & 0x8000) != 0 && pause.InContinue(x, y))) {
             break;
         }
+
+        else if (pause.InQuit(x, y) && (GetKeyState(VK_LBUTTON) & 0x8000) != 0) {
+            tomainMenu = true;
+            break;
+        }
+
         else if (e.type == SDL_QUIT) {
-            quit = true;
+            shutDown = true;
             break;
         }
+
         else {
             SDL_RenderCopy(window.renderer, pause.texture, NULL, &pause.hitbox);
             SDL_RenderPresent(window.renderer);
         }
+    }
+}
+
+void ShowHearts(Player player, Window& window, SDL_Texture*& heart)
+{
+    SDL_Rect texr;
+    for (int i = 0; i < player.Hearts(); i++) {
+        texr.x = (i * 70) + 10;
+        texr.y = 10;
+        texr.w = 64;
+        texr.h = 61;
+        SDL_RenderCopy(window.renderer, heart, NULL, &texr);
     }
 }

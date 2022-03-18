@@ -2,10 +2,11 @@
 
 class Player
 {
+    private:
+        int health = 3;
     public:
         SDL_Texture *texture;
         SDL_Rect texr;
-    
         Player(SDL_Texture *&texture, int x, int y, int w, int h) {
             this->texture = texture;
             texr.x = x;
@@ -13,6 +14,25 @@ class Player
             texr.w = w;
             texr.h = h;
             SDL_QueryTexture(texture, NULL, NULL, &texr.w, &texr.h);
+        }
+
+        void HealthNull() {
+            health = 3;
+        }
+
+        void HealthRemove() {
+            health--;
+        }
+
+        int Hearts() {
+            return health;
+        }
+
+        bool Alive() {
+            if (health < 1) {
+                return false;
+            }
+            return true;
         }
 };
 
@@ -67,16 +87,55 @@ class PauseMenu
 
         bool InContinue(int x, int y)
         {
-            float k = (float)hitbox.w / (float)512;
-
-            if (x >= hitbox.x + roundf(k * (float)60) && x <= hitbox.x + roundf(k * (float)345) &&
-                y <= hitbox.y + roundf(k * (float)72) && y >= hitbox.y + roundf(k * (float)116)) return true;
+            if (x >= (int)hitbox.x + 81 && x <= (int)hitbox.x + 325 &&
+                y >= (int)hitbox.y + 71 && y <= (int)hitbox.y + 118) {
+                return true;
+            }
+            return false;
         }
         bool InQuit(int x, int y)
         {
-            float k = (float)hitbox.w / (float)512;
-
-            if (x >= hitbox.x + roundf(k * (float)60) && x <= hitbox.x + roundf(k * (float)200) &&
-                y <= hitbox.y + roundf(k * (float)162) && y >= hitbox.y + roundf(k * (float)206)) return true;
+            if (x >= (int)hitbox.x + 81 && x <= (int)hitbox.x + 173 &&
+                y >= (int)hitbox.y + 177 && y <= (int)hitbox.y + 220) {
+                return true;
+            }
+            return false;
         }
+};
+
+class MainMenu
+{
+public:
+    SDL_Texture* texture;
+    SDL_Rect hitbox;
+    MainMenu(SDL_Texture*& texture, int x, int y, int w, int h)
+    {
+        this->texture = texture;
+        hitbox.x = x;
+        hitbox.y = y;
+        hitbox.w = w;
+        hitbox.h = h;
+    }
+
+    void Query()
+    {
+        SDL_QueryTexture(texture, NULL, NULL, &hitbox.w, &hitbox.h);
+    }
+
+    bool InStart(int x, int y)
+    {
+        if (x >= (int)hitbox.x + 170 && x <= (int)hitbox.x + 440 &&
+            y >= (int)hitbox.y + 200 && y <= (int)hitbox.y + 260) {
+            return true;
+        }
+        return false;
+    }
+    bool InExit(int x, int y)
+    {
+        if (x >= (int)hitbox.x + 125 && x <= (int)hitbox.x + 295 &&
+            y >= (int)hitbox.y + 510 && y <= (int)hitbox.y + 570) {
+            return true;
+        }
+        return false;
+    }
 };
