@@ -61,7 +61,7 @@ class Window
 
         Window(int width, int height)
         {
-            window = SDL_CreateWindow("Mario", 500, 200, width, height, 0);
+            window = SDL_CreateWindow("Mario", 0, 50, width, height, 0);
             renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
         }
 };

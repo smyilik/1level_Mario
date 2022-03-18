@@ -116,12 +116,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\sanya\Documents\libraries\SDL2_image-2.0.5\include;C:\Users\sanya\Documents\libraries\SDL2-2.0.20\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\sanya\OneDrive\Документы\libraries\SDL2_image-devel-2.0.5-VC\SDL2_image-2.0.5\include;C:\Users\sanya\OneDrive\Документы\libraries\SDL2-devel-2.0.20-VC\SDL2-2.0.20\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\sanya\Documents\libraries\SDL2_image-2.0.5\lib\x64;C:\Users\sanya\Documents\libraries\SDL2-2.0.20\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\sanya\OneDrive\Документы\libraries\SDL2_image-devel-2.0.5-VC\SDL2_image-2.0.5\lib\x64;C:\Users\sanya\OneDrive\Документы\libraries\SDL2-devel-2.0.20-VC\SDL2-2.0.20\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClCompile Include="Classes.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="second.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Images\1st_Level.png" />
